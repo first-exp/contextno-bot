@@ -8,10 +8,10 @@ class CacheRepository:
         self.redis = redis
         
     async def set_challenge_id_by_chat_id(self, chat_id: str, challenge_id: str):
-         await self.redis.set(f"{chat_id}", challenge_id)
+         await self.redis.set(chat_id, challenge_id)
          
     async def get_challenge_id_by_chat_id(self, chat_id: str):
-        await self.redis.get(f"{chat_id}")
+        await self.redis.get(chat_id)
         
     async def set_word_rank(self, chat_id: str, word: str, rank: int):
         key = WORD_RANK_KEY.format(chat_id)
