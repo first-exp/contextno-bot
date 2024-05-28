@@ -3,11 +3,8 @@ from pydantic import BaseModel
 
 class ContextnoSession(BaseModel):
     challenge_id: str
-    chat_id: str = None  # type: ignore
+    chat_id: str
 
-class ContextnoSessionIn(BaseModel):
-    id: str
-    name: str
 
 class WordRank(BaseModel):
     completed: bool
