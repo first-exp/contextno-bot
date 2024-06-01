@@ -7,7 +7,7 @@ services:
       - "6379:6379"
   app:
     build: ./
-    container_name: contextno-app
+    container_name: contextno-bot
     command: ["/app/.venv/bin/python", "main.py"]
     depends_on:
         - redis
