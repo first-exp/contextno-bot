@@ -1,9 +1,9 @@
 import asyncio
 
 from aiogram import Bot, Dispatcher, types
-from config import token
+from config import get_settings
 
-bot = Bot(token=token)
+bot = Bot(token=get_settings().tg_token)
 dp = Dispatcher()
 
 
@@ -17,3 +17,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+    
