@@ -6,7 +6,7 @@ from config import token
 bot = Bot(token=token)
 dp = Dispatcher()
 
-
+# TODO: убрать этот хэндлер и диспетчер из этого файла после подключения сервисов
 @dp.message()
 async def any_text(message: types.Message):
     await message.answer("Hello!")
