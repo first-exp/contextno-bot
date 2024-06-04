@@ -1,2 +1,4 @@
+__pycache__/
 contextno-bot.code-workspace
 .vscode
+.env
