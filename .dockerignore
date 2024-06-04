@@ -1,0 +1,6 @@
+__pycache__
+.git
+.gitignore
+.venv
+.vscode
+contextno-bot.code-workspace

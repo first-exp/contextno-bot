@@ -1,0 +1,16 @@
+version: "3"
+services:
+  redis:
+    image: redis:7.0.0
+    container_name: redis-db
+    ports:
+      - "6379:6379"
+  app:
+    build: ./
+    container_name: contextno-bot
+    command: ["/app/.venv/bin/python", "main.py"]
+    depends_on:
+        - redis
+  
+
+    
