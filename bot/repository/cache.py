@@ -1,4 +1,4 @@
-from aioredis import Redis
+from redis import Redis
 
 
 WORD_RANK_KEY = "word_rank:{}"
