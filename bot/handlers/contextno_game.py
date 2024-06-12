@@ -1,42 +1,60 @@
-from aiogram import Router, F
-from aiogram.filters import Command, CommandObject
+from aiogram import Bot, F, Router
+from aiogram.filters import Command, CommandStart
+from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
+from bot.handles.get_five_handle import get_five_handle
+from bot.handles.guess_word_handle import guess_word_handle
+from bot.handles.new_game_handle import new_game_handle
+from bot.handles.tip_handle import tip_handle
+from bot.handles.welcome_instr_handle import hundle_welcome_instr
+from bot.services.challenge_service import ChallengeService
+from bot.services.message_service import MessageService
+from repository.cache import CacheRepository
 from repository.contextno import ContextnoRepo
-
-# from models.contextno import WordRank
-
-# from filters.correct_word import CorrectWordCheck
 
 router = Router()
 
 
-# @router.message(F.text)
-# async def guess_word(message: Message, repo: ContextnoRepo):
-#     guess_word_rank = await repo.get_word_rank(message.chat.id, message.text)
+@router.message(CommandStart())
+async def welcome_instructions(
+    message: Message,
+    state: FSMContext,
+    repo: ContextnoRepo,
+    cache: CacheRepository,
+    bot: Bot,
+):
+    challenge_service = ChallengeService(repo, cache)
+    message_service = MessageService(bot)
 
-#     if guess_word_rank.rank > 1500:
-#         await message.answer(f"🔴 {guess_word_rank.word} - {guess_word_rank.rank}")
-#     elif 300 < word_rank.rank <= 1500:
-#         await message.answer(f"🟡 {guess_word_rank.word} - {guess_word_rank.rank}")
-#     else:
-#         await message.answer(f"🟢 {guess_word_rank.word} - {guess_word_rank.rank}")
-
-
-@router.message(Command("k"), F.text.count(" ") == 1)
-async def guess_word(message: Message) -> None:
-    await message.answer("Это слово")
+    await hundle_welcome_instr(message, state, challenge_service, message_service)
 
 
-@router.message(Command("k"), F.text.count(" ") > 1)
-async def wrong_guess_word(message: Message) -> None:
-    await message.answer("Введите слово, а не словосочетание")
+@router.message(Command("get"))
+async def get_five(message: Message, repo: ContextnoRepo, cache: CacheRepository):
+    challenge_service = ChallengeService(repo, cache)
+
+    await get_five_handle(message, challenge_service)
 
 
-# @router.message(Command('tip'))
-# async def get_help(message: Message, repo: ContextnoRepo) -> None:
-#     tip_command = await repo.get_tip(str(message.chat.id))
+@router.message(Command("tip"))
+async def get_help(
+    message: Message, repo: ContextnoRepo, cache: CacheRepository
+) -> None:
+    challenge_service = ChallengeService(repo, cache)
 
-#     tip_model = Tip(**tip_command)
+    await tip_handle(message, challenge_service)
 
-#     await message.answer()
+
+@router.message(Command("new"))
+async def new_game(message: Message, repo: ContextnoRepo, cache: CacheRepository):
+    challenge_service = ChallengeService(repo, cache)
+
+    await new_game_handle(message, challenge_service)
+
+
+@router.message(F.text.lower())
+async def guess_word(message: Message, repo: ContextnoRepo, cache: CacheRepository):
+    challenge_service = ChallengeService(repo, cache)
+
+    await guess_word_handle(message, challenge_service)

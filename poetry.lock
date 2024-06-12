@@ -594,6 +594,20 @@ hiredis = ["hiredis (>=1.0.0)"]
 ocsp = ["cryptography (>=36.0.1)", "pyopenssl (==20.0.1)", "requests (>=2.26.0)"]
 
 [[package]]
+name = "redis-cli"
+version = "1.0.1"
+description = "A Redis Python Client"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "redis-cli-1.0.1.tar.gz", hash = "sha256:6be46d8e6ae638fec27cb425d499b7f25b1592402c74d5d17f5b85b5e7f988a0"},
+    {file = "redis_cli-1.0.1-py3-none-any.whl", hash = "sha256:e9f6af4a8b7591d8bfd1e23be89bdd9666ce824df881748fb02b88dd30575dc8"},
+]
+
+[package.dependencies]
+redis = ">=4"
+
+[[package]]
 name = "setuptools"
 version = "70.0.0"
 description = "Easily download, build, install, upgrade, and uninstall Python packages"
@@ -725,4 +739,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "21d31f7984b9706a3b9e26f10997d4b3d8af851ba15f1cae693c837a4b405878"
+content-hash = "c28e11f31a1bfbfb72f2902bd2173fe26513c4f29abca0d2bd0195ef1ed579ba"
