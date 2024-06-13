@@ -2,7 +2,7 @@ import asyncio
 import logging
 import sys
 
-import redis
+import redis.asyncio as redis
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
