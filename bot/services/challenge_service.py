@@ -9,6 +9,10 @@ RULES = """\n- У тебя есть неограничнное количест�
 - Чем выше слово в списке (чем меньше его номер), тем оно ближе к секретному слову.\n"""
 
 
+# TODO: убрать message.answer из методов сервиса и заменить на return строки.
+# message.answer должен быть в хендлерах
+
+
 class NoMessageTextException(Exception):
     def __init__(self, message: Message):
         self.message = message
@@ -85,22 +89,19 @@ class ChallengeService:
                 f"<i>Вот подсказка</i>: {self.__icons_for_ranks(tip_word.rank)} <b>{tip_word.word}</b> - <i>{tip_word.rank}</i>"
             )
 
-    async def get_five_closest(self, message: Message):
+    async def get_five_closest(self, message: Message) -> str | None:
         five_closest = await self.cache.get_five_closests_words_by_chat_id(
             message.chat.id
         )
         if not five_closest:
-            await message.answer("Нет данных о ближайших словах")
-            return
+            return None
 
-        list_of_words = "\n".join(
+        return "\n".join(
             [
                 f"{self.__icons_for_ranks(rank)} <b>{word.decode('utf-8')}</b> - {int(rank)}"
                 for word, rank in five_closest
             ]
         )
-
-        await message.answer(list_of_words)
 
     async def send_rules(self, message: Message):
         await message.answer(
