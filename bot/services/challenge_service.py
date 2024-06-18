@@ -9,6 +9,12 @@ RULES = """\n- У тебя есть неограничнное количест�
 - Чем выше слово в списке (чем меньше его номер), тем оно ближе к секретному слову.\n"""
 
 
+class NoMessageTextException(Exception):
+    def __init__(self, message: Message):
+        self.message = message
+        super().__init__(f"Message {message} has no text")
+
+
 class ChallengeService:
     def __init__(self, repo: ContextnoRepo, cache: CacheRepository) -> None:
         self.repo = repo
@@ -19,14 +25,16 @@ class ChallengeService:
         await self.cache.set_challenge_id_by_chat_id(chat_id, str(challenge_id))
 
     async def get_challenge_id(self, chat_id: int):
-        challenge_id = await self.cache.get_challenge_id_by_chat_id(chat_id)
-        return challenge_id
+        return await self.cache.get_challenge_id_by_chat_id(chat_id)
 
     async def guess_word(
         self,
         challenge_id: int,
         message: Message,
     ):
+        if not message.text:
+            raise NoMessageTextException(message)
+
         if message.text.count(" ") >= 1:
             await message.answer("<b>Ввведите слово, а не словосочетание</b>")
             return
@@ -35,7 +43,7 @@ class ChallengeService:
             challenge_id, message.text.lower()
         )
 
-        rank_icon = self.icons_for_ranks(guess_word_model.rank)
+        rank_icon = self.__icons_for_ranks(guess_word_model.rank)
 
         if guess_word_model.error is True:
             await message.answer(
@@ -65,9 +73,7 @@ class ChallengeService:
                 f"<i>Поздравляем! \n\nВы угадали слово</i> <b>{tip_word.word}</b> <i>за</i> {tip_word.tries} <i>попыток и</i> {tip_word.tips} <i>подсказок.</i> \n\n<i>Начать новую игру - <b>/new</b></i>"
             )
         elif tip_word.completed is True:
-            await message.answer(
-                'Вы уже отгадали слово. Нажмите /new для новой игры!'
-            )
+            await message.answer("Вы уже отгадали слово. Нажмите /new для новой игры!")
         elif tip_word.rank == -1:
             await message.answer("<b>Сначала введите слово</b>")
         else:
@@ -76,7 +82,7 @@ class ChallengeService:
             )
 
             await message.answer(
-                f"<i>Вот подсказка</i>: {self.icons_for_ranks(tip_word.rank)} <b>{tip_word.word}</b> - <i>{tip_word.rank}</i>"
+                f"<i>Вот подсказка</i>: {self.__icons_for_ranks(tip_word.rank)} <b>{tip_word.word}</b> - <i>{tip_word.rank}</i>"
             )
 
     async def get_five_closest(self, message: Message):
@@ -89,7 +95,7 @@ class ChallengeService:
 
         list_of_words = "\n".join(
             [
-                f"{self.icons_for_ranks(rank)} <b>{word.decode('utf-8')}</b> - {int(rank)}"
+                f"{self.__icons_for_ranks(rank)} <b>{word.decode('utf-8')}</b> - {int(rank)}"
                 for word, rank in five_closest
             ]
         )
@@ -108,7 +114,7 @@ class ChallengeService:
     async def del_five_closest(self, chat_id: int):
         await self.cache.delete_word_ranks_by_chat_id(chat_id)
 
-    def icons_for_ranks(self, rank: int):
+    def __icons_for_ranks(self, rank: int):
         if rank >= 1500:
             return "🔴"
         elif rank > 300:
