@@ -14,7 +14,5 @@ async def start_game(callback: CallbackQuery, bot: Bot, state: FSMContext):
     for message_id in messages:
         await bot.delete_message(callback.message.chat.id, message_id)
 
-    # реализовать удаление только для личного чата (1 на 1 с ботом)
-
     await state.clear()
     await callback.message.edit_text("<b>Вы в игре...</b>")

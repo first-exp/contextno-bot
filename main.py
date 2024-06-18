@@ -12,6 +12,7 @@ from bot.callbacks import start_game_callback
 from bot.fsm import control_start_button
 from bot.handlers import contextno_game
 from bot.middlewares.repo_middleware import RepoMiddleware
+from bot.services.challenge_service import ChallengeService
 from config_reader import config
 from repository.cache import CacheRepository
 from repository.contextno import ContextnoRepo
@@ -27,10 +28,13 @@ async def main():
         contextno_repo = ContextnoRepo(session)
         pool = redis.ConnectionPool.from_url("redis://localhost")
         cache_repo = CacheRepository(pool)
+        challenge_service_main = ChallengeService(contextno_repo, cache_repo)
 
         dp = Dispatcher()
 
-        dp.message.middleware(RepoMiddleware(contextno_repo, cache_repo))
+        dp.message.middleware(
+            RepoMiddleware(contextno_repo, cache_repo, challenge_service_main)
+        )
 
         dp.include_routers(
             control_start_button.router,

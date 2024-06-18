@@ -26,6 +26,13 @@ class CacheRepository:
             key = WORD_RANK_KEY.format(chat_id)
             return await redis.zrange(str(key), 0, 4, withscores=True)
 
-    async def clear_db(self):
+    async def delete_challenge_id_by_chat_id(self, chat_id: int):
         async with Redis.from_pool(self.pool) as redis:
-            return await redis.flushdb()
+            return await redis.delete(str(chat_id))
+
+    async def delete_word_ranks_by_chat_id(self, chat_id: int):
+        async with Redis.from_pool(self.pool) as redis:
+            key = WORD_RANK_KEY.format(chat_id)
+            return await redis.delete(key)
+
+    # TODO
