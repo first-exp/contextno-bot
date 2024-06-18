@@ -7,7 +7,7 @@ from bot.handles.get_five_handle import get_five_handle
 from bot.handles.guess_word_handle import guess_word_handle
 from bot.handles.new_game_handle import new_game_handle
 from bot.handles.tip_handle import tip_handle
-from bot.handles.welcome_instr_handle import hundle_welcome_instr
+from bot.handles.welcome_instr_handle import handle_welcome_instr
 from bot.services.challenge_service import ChallengeService
 from repository.contextno import ContextnoRepo
 
@@ -18,7 +18,7 @@ router = Router()
 async def welcome_instructions(
     message: Message, state: FSMContext, challenge_service: ChallengeService
 ):
-    await hundle_welcome_instr(message, state, challenge_service)
+    await handle_welcome_instr(message, state, challenge_service)
 
 
 @router.message(Command("get"))
