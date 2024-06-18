@@ -26,7 +26,7 @@ async def main():
         )
 
         contextno_repo = ContextnoRepo(session, config.contextno_url)
-        pool = redis.ConnectionPool.from_url("redis://localhost")
+        pool = redis.ConnectionPool.from_url(config.redis_url)
         cache_repo = CacheRepository(pool)
         challenge_service_main = ChallengeService(contextno_repo, cache_repo)
 
