@@ -34,5 +34,3 @@ class CacheRepository:
         async with Redis.from_pool(self.pool) as redis:
             key = WORD_RANK_KEY.format(chat_id)
             return await redis.delete(key)
-
-    # TODO
