@@ -12,7 +12,6 @@ async def start_button_control(message: Message, state: FSMContext):
     data = await state.get_data()
     messages = data.get("messages", [])
     messages.append(message.message_id)
-    await state.update_data(messages=messages)
     sent_message = await message.answer(
         "<i>Пожалуйста, нажмите кнопку</i> '<b>Понятно. К игре!</b>', <i>чтобы продолжить.</i>"
     )
