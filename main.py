@@ -25,7 +25,7 @@ async def main():
             default=DefaultBotProperties(parse_mode=ParseMode.HTML),
         )
 
-        contextno_repo = ContextnoRepo(session)
+        contextno_repo = ContextnoRepo(session, config.contextno_url)
         pool = redis.ConnectionPool.from_url("redis://localhost")
         cache_repo = CacheRepository(pool)
         challenge_service_main = ChallengeService(contextno_repo, cache_repo)
