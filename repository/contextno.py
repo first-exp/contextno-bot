@@ -12,7 +12,7 @@ class ContextnoRepo:
         url = self.url + "/get_random_challenge"
         params = {"user_id": "contextno_bot"}
         async with self.http_session.get(url=url, params=params) as resp:
-            sess_data = (await resp.json())
+            sess_data = await resp.json()
             return sess_data["id"]
 
     async def get_word_rank(self, challenge_id: int, word: str) -> WordRank:
