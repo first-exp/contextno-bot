@@ -1,5 +1,3 @@
-from aiogram.types import Message
-
 from bot.keyboards.start_keyboard import startgame_inline
 from bot.states.start_button_state import Form
 from models.contextno import WordRank
@@ -11,12 +9,6 @@ RULES = """\n- У тебя есть неограничнное количест�
 - Чем выше слово в списке (чем меньше его номер), тем оно ближе к секретному слову.\n"""
 
 
-class NoMessageTextException(Exception):
-    def __init__(self, message: Message):
-        self.message = message
-        super().__init__(f"Message {message} has no text")
-
-
 class ChallengeService:
     def __init__(self, repo: ContextnoRepo, cache: CacheRepository) -> None:
         self.repo = repo
@@ -26,11 +18,8 @@ class ChallengeService:
         challenge_id = await self.repo.get_challenge_id(chat_id)
         await self.cache.set_challenge_id_by_chat_id(chat_id, str(challenge_id))
 
-    async def get_challenge_id(self, chat_id: int):
-        return await self.cache.get_challenge_id_by_chat_id(chat_id)
-
     async def guess_word(self, chat_id: int, message_text: str) -> str:
-        challenge_id = await self.get_challenge_id(chat_id)
+        challenge_id = await self.cache.get_challenge_id_by_chat_id(chat_id)
 
         guess_word_model = await self.repo.get_word_rank(challenge_id, message_text)
 
@@ -38,18 +27,16 @@ class ChallengeService:
             message_text, guess_word_model, chat_id
         )
 
-    async def get_tip_response(self, message: Message):
-        challenge_id = await self.get_challenge_id(message.chat.id)
+    async def get_tip_response(self, message_text: str, chat_id: int):
+        challenge_id = await self.cache.get_challenge_id_by_chat_id(chat_id)
         tip_word = await self.repo.get_tip(str(challenge_id))
 
         return await self.__prepare_answer_text_and_add_word_to_cache(
-            message.text, tip_word, message.chat.id
+            message_text, tip_word, chat_id
         )
 
-    async def get_five_closest(self, message: Message) -> str | None:
-        five_closest = await self.cache.get_five_closests_words_by_chat_id(
-            message.chat.id
-        )
+    async def get_five_closest(self, chat_id: int) -> str | None:
+        five_closest = await self.cache.get_five_closests_words_by_chat_id(chat_id)
         if not five_closest:
             return None
 
@@ -60,8 +47,8 @@ class ChallengeService:
             ]
         )
 
-    async def send_rules(self, message: Message, state) -> tuple:
-        if message.chat.type == "private":
+    async def send_rules(self, chat_type: str, state) -> tuple:
+        if chat_type == "private":
             await state.set_state(Form.start_game_button.state)
         return f"<code>Основные правила</code>: \n <i>{RULES}</i>", startgame_inline()
 
