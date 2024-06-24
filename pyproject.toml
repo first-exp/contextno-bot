@@ -13,6 +13,11 @@ aiohttp = "^3.9.5"
 asyncio = "^3.4.3"
 pydantic-settings = "^2.2.1"
 python-dotenv = "^1.0.1"
+dispatcher = "^1.0"
+redis = "^5.0.4"
+setuptools = "^70.0.0"
+cachetools = "^5.3.3"
+redis-cli = "^1.0.1"
 
 
 [build-system]
